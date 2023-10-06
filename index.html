@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Mini Games</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Zen Mini Games</h1>
+        <div id="menuButton" class="menuIcon" onclick="handleMenuButtonClick()">
+            <div class="menuBar"></div>
+            <div class="menuBar"></div>
+            <div class="menuBar"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="menu" class="menuContainer" style="visibility: hidden;">
+
+        </div>
+    </div>
+
+    <script>
+        const menuContainer = document.getElementById("menu");
+        const handleMenuButtonClick = () => {
+            const visibility = menuContainer.style.visibility;
+            if (visibility === "hidden") {
+                menuContainer.style.visibility = "visible";
+                return;
+            }
+            menuContainer.style.visibility = "hidden";
+        };
+    </script>
+</body>
+</html>
