@@ -1,16 +1,25 @@
 class Ball {
-    constructor(x, y) {
+    constructor(x, y, fillStyle = 'white') {
         this.x = x;
         this.y = y;
-        this.fillStyle = 'white';
+        this.fillStyle = fillStyle;
 
         this.u = 0;
         this.v = 0;
     }
 
-    includeDrag() {
+    updateVelocity() {
         this.u *= 0.8;
         this.v *= 0.8;
+    }
+
+    velocityMagnitude() {
+        return Math.sqrt(this.u*this.u + this.v*this.v);
+    }
+
+    updatePosition(dt) {
+        this.x += this.u * dt;
+        this.y += this.v * dt;
     }
 
     render = (context, actualRadius) => {

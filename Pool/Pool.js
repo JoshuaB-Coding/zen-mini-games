@@ -15,6 +15,7 @@ class Pool {
         this.createEventListeners();
 
         this.cueBall = new Ball(this.width / 5, this.height / 2);
+        this.targetBall = new Ball(this.width * 4 / 5, this.height / 2, 'red');
 
         this.isMouseDown = false;
         this.isGamePlaying = false;
@@ -114,28 +115,13 @@ class Pool {
     }
 
     updateGameState(dt) {
-        const canvasRadius = ballRadius * this.getConversionFactor();
+        this.cueBall.updatePosition(dt);
+        this.applyWallCollisionRules(this.cueBall);
 
-        this.cueBall.x += this.cueBall.u * dt;
-        this.cueBall.y += this.cueBall.v * dt;
+        this.targetBall.updatePosition(dt);
+        this.applyWallCollisionRules(this.targetBall);
 
-        if (this.cueBall.x - canvasRadius < 0) {
-            this.cueBall.x = canvasRadius;
-            this.cueBall.u = -this.cueBall.u;
-        }
-        else if (this.cueBall.x + canvasRadius > this.canvas.width) {
-            this.cueBall.x = this.canvas.width - canvasRadius;
-            this.cueBall.u = -this.cueBall.u;
-        }
-
-        if (this.cueBall.y - canvasRadius < 0) {
-            this.cueBall.y = canvasRadius;
-            this.cueBall.v = -this.cueBall.v;
-        }
-        else if (this.cueBall.y + canvasRadius > this.canvas.height) {
-            this.cueBall.y = this.canvas.height - canvasRadius;
-            this.cueBall.v = -this.cueBall.v;
-        }
+        this.applyBallCollisionRules(this.cueBall, this.targetBall);
 
         const totalVelocity = Math.sqrt(this.cueBall.u * this.cueBall.u + this.cueBall.v * this.cueBall.v);
         if (totalVelocity < 1) {
@@ -145,7 +131,40 @@ class Pool {
             this.isGamePlaying = false;
             return;
         }
-        this.cueBall.includeDrag();
+        this.cueBall.updateVelocity();
+    }
+
+    applyWallCollisionRules(ball) {
+        const canvasRadius = ballRadius * this.getConversionFactor();
+
+        if (ball.x - canvasRadius < 0) {
+            ball.x = canvasRadius;
+            ball.u = -ball.u;
+        }
+        else if (ball.x + canvasRadius > this.canvas.width) {
+            ball.x = this.canvas.width - canvasRadius;
+            ball.u = -ball.u;
+        }
+
+        if (ball.y - canvasRadius < 0) {
+            ball.y = canvasRadius;
+            ball.v = -ball.v;
+        }
+        else if (ball.y + canvasRadius > this.canvas.height) {
+            ball.y = this.canvas.height - canvasRadius;
+            ball.v = -ball.v;
+        }
+    }
+
+    applyBallCollisionRules(ball1, ball2) {
+        const canvasRadius = ballRadius * this.getConversionFactor();
+
+        const dx = ball1.x - ball2.x;
+        const dy = ball1.y - ball2.y;
+
+        if (dx*dx + dy*dy > 4 * canvasRadius) return;
+
+        // TODO: Complicated collision maths
     }
 
     render() {
@@ -154,6 +173,7 @@ class Pool {
         const renderRadius = ballRadius * this.getConversionFactor();
 
         this.cueBall.render(this.context, renderRadius);
+        this.targetBall.render(this.context, renderRadius);
 
         if (this.isMouseDown) {
             this.renderAimingLine();
