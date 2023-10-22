@@ -1,4 +1,5 @@
 import Ball from "./Models/Ball.js";
+import applyBallCollision from "./Helpers/ballCollision.js";
 
 const ballRadius = 0.035;
 const tableLength = 2.14;
@@ -164,7 +165,20 @@ class Pool {
 
         if (dx*dx + dy*dy > 4 * canvasRadius) return;
 
-        // TODO: Complicated collision maths
+        // A: (u1, v1)
+        // B: (u2, v2)
+        // COLLISION LINE: (u2 - u1, v2 - v1)
+        const collisionLine = {
+            x: ball2.u - ball1.u,
+            y: ball2.v - ball1.v,
+        };
+        const collisionLineMagnitude = Math.sqrt(collisionLine.x * collisionLine.x + collisionLine.y * collisionLine.y);
+        const collisionDirection = {
+            x: collisionLine.x / collisionLineMagnitude,
+            y: collisionLine.y / collisionLineMagnitude,
+        };
+
+        applyBallCollision(ball1, ball2);
     }
 
     render() {
